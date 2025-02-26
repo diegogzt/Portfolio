@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DEVELOPER DIEGO</title>
+    <link rel="stylesheet" href="../static/style.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='output.css') }}">
+    <link rel="stylesheet" href="../static/output.css">
+    <style>
+        :root {
+            --color-woodsmoke-50: #f1f7fa;
+            --color-woodsmoke-100: #dbe9f2;
+            --color-woodsmoke-200: #bbd3e6;
+            --color-woodsmoke-300: #8cb4d4;
+            --color-woodsmoke-400: #568dba;
+            --color-woodsmoke-500: #3b719f;
+            --color-woodsmoke-600: #345c86;
+            --color-woodsmoke-700: #2f4d6f;
+            --color-woodsmoke-800: #2e425c;
+            --color-woodsmoke-900: #2a394f;
+            --color-woodsmoke-950: #040609;
+            --button-background: #2f4d6f;
+            --background-header: #0a0013;
+            --color-pruena: #0d0014;
+        }
+
+        #draggable-item {
+            width: 100px;
+            height: 100px;
+            background-color: lightblue;
+            border-radius: 50%;
+            position: absolute;
+            cursor: grab;
+        }
+    </style>
+    
+</head>
+
+<body class="bg-[url(../static/background.jpeg)] bg-cover bg-repeat overflow-x-hidden">
+    <script src="https://unpkg.com/typed.js@2.1.0/dist/typed.umd.js"></script>
+    <div class="relative flex justify-center">
+        <header
+            class="header fixed z-10 w-[80dvw] h-[9dvh] my-3 bg-[#0d0014]/70 rounded-lg border-[0.1px] border-amber-50/50 flex justify-between px-10 items-center">
+            <div class="flex items-center">
+                <img src="../static/logo-diego.png" alt="emoji-programer " class="w-[4em]">
+                <h1 class="text-stone-50 ml-3 text-2xl">Diego Zaldivar</h1>
+            </div>
+            <div class="flex space-x-3">
+                <a href="#" class="text-stone-50 hover:bg-gray-800/70 transition duration-300 p-3 rounded-lg">Chat</a>
+                <a href="#" class="text-stone-50 hover:bg-gray-800/70 transition duration-300 p-3 rounded-lg">Proyectos</a>
+                <a href="#" class="text-stone-50 hover:bg-gray-800/70 transition duration-300 p-3 rounded-lg">Experiencia</a>
+                <a href="#" class="text-stone-50 hover:bg-gray-800/70 transition duration-300 p-3 rounded-lg">Contacto</a>
+            </div>
+        </header>
+    </div>
+    <section class="w-screen h-screen flex justify-center items-center bg-gradient-to-b from-transparent to-[#18002d]/80">
+        <div class="flex flex-col justify-center items-center">
+            <span class="text-6xl text-white flex justify-center font-bold mb-2 animate">Hola
+                <span class="text-4xl md:text-6xl" aria-hidden="true">👋🏼</span>
+            </span>
+            <div class="flex justify-center">
+                <h1 class="text-4xl text-white animate2">Soy</h1>
+                <h1 class="text-4xl ml-2 font-bold animate2 text-white"> Diego Tovar</h1>
+                <h1 class="text-4xl text-white animate2">, un Estudiante Full stack</h1>
+            </div>
+            <p id="typed-text" class="text-2xl w-xl text-center mt-3 text-fuchsia-50 animate3"></p>
+        </div>
+    </section>
+    <section class="w-screen h-screen bg-gradient-to-b from-[#18002d]/80 to-[#010108]">
+        <div class="flex flex-col items-center mb-6">
+            <h1 class="text-slate-50 text-4xl font-bold">Marot</h1>
+            <p class="text-slate-50 w-96 text-center mt-2.5 mb-4">Preguntale a Marot cualquier duda que tengas sobre mi, tambien puedes preguntarle lo que sea pero esta especializado en el desarrollo Frontend</p>
+        </div>
+        <div class="flex justify-center">
+            <div class="chat-container rounded-2xl border-2 border-amber-50 bg-[#3702a2]">
+                <div class="chat-body" id="chat-body"></div>
+                <div class="chat-footer bg-[#3702a2] flex justify-between items-center p-4">
+                    <textarea class="myInput text-white w-full h-auto max-h-72 resize-none" id="user-input" placeholder="Escribe tu mensaje..."></textarea>
+                    <button id="button" onclick="sendMessage()" class="bg-amber-300 ml-4 p-2 rounded">Enviar</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- <section class="w-screen h-screen bg-gradient-to-b from-[#010108] to-[#11001b]">
+        <div class="flex justify-center items-center bg-blue-500 w-[400px] h-[400px]">        
+            <div id="draggable-item"></div>
+        </div>
+    </section>
+
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.7/dist/gsap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.7/dist/Draggable.min.js"></script> -->
+    <!-- <script>
+        gsap.registerPlugin(Draggable);
+
+        Draggable.create("#draggable-item", {
+            type: "x,y",
+            bounds: {
+                minX: 0,
+                maxX: 400,
+                minY: 0,
+                maxY: 400
+                },
+                inertia: true,
+                onDrag: function () {  
+                    gsap.to(this.target, { scale: 1.1, duration: 0.2 });
+                    },
+                    onDragEnd: function () {
+                        gsap.to(this.target, { scale: 1, duration: 0.2 });
+                        }
+                        });
+                    </script> -->
+
+        
+    <section class="w-screen h-[120dvh] bg-gradient-to-b from-[#010108] to-[#11001b] flex justify-center">
+        <div class="w-[90dvw] h-[110dvh] bg-amber-300 pt-11">
+            <h1 class="text-5xl text-amber-50 font-bold">Mis espelizaciones</h1>
+            <div class="flex-col relative z-0">
+                <div class="bg-blue-950 z-0 w-xl h-40 rounded-3xl border border-amber-50 mb-18 relative">
+                    <div class="absolute -z-10 right-10 -bottom-18 w-1 h-18 bg-red-500"></div></div>
+                    <h2>Desarrolo Frontend</h2>
+                </div>
+            <div class="bg-blue-950 w-xl h-40 rounded-3xl border border-amber-50 mb-18"> 
+                <h2>Diseño web en Figma</h2>
+            </div>
+            <div class="bg-blue-950 w-xl h-40 rounded-3xl border border-smoke=">
+                <h2>Desarrolo Backend</h2>
+            </div>
+        </div>
+        </div>
+    </section>
+    <script src="../static/script.js"></script>
+    </body>
+</html>
+                
