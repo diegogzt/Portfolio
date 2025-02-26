@@ -66,7 +66,7 @@ jobs:
           client-secret: "675ce6b3-329d-495f-a5f6-116876aa79ee"
           subscription-id: "ed05b40a-0146-4437-93d2-bd5af5c791a0"
           tenant-id: "876e387c-7116-48f0-b3b1-ded452823875"
-          auth-type: 'id-token'  # Add this line
+          auth-type: 'SERVICE_PRINCIPAL'  # Correct the auth-type
 
       - name: 'Deploy to Azure Web App'
         uses: azure/webapps-deploy@v3
@@ -76,4 +76,3 @@ jobs:
           action: upload
           app_location: v1/templates/index.html
           output_location: /
-          github_id_token: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_AB2024D3B0D1431796E35F29CF6C7170 }}
