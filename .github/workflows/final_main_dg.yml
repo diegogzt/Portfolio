@@ -65,7 +65,7 @@ jobs:
           client-id: "a1f4c022-4417-4d93-8c73-5fa493f38cdf"
           tenant-id: "876e387c-7116-48f0-b3b1-ded452823875"
           subscription-id: "ed05b40a-0146-4437-93d2-bd5af5c791a0"
-          auth-type: 'OIDC'  # Ensure this is set correctly
+    
 
       - name: 'Deploy to Azure Web App'
         uses: azure/webapps-deploy@v3
