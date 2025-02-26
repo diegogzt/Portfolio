@@ -10,7 +10,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     permissions:
-      contents: read #This is required for actions/checkout
+      contents: read # This is required for actions/checkout
 
     steps:
       - uses: actions/checkout@v4
@@ -47,7 +47,9 @@ jobs:
     environment:
       name: 'Production'
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
-    
+    permissions:
+      id-token: write  # Add this line
+
     steps:
       - name: Download artifact from build job
         uses: actions/download-artifact@v4
@@ -64,7 +66,7 @@ jobs:
           client-secret: "675ce6b3-329d-495f-a5f6-116876aa79ee"
           subscription-id: "ed05b40a-0146-4437-93d2-bd5af5c791a0"
           tenant-id: "876e387c-7116-48f0-b3b1-ded452823875"
-          
+          auth-type: 'id-token'  # Add this line
 
       - name: 'Deploy to Azure Web App'
         uses: azure/webapps-deploy@v3
