@@ -36,7 +36,7 @@ jobs:
       - name: Upload artifact for deployment jobs
         uses: actions/upload-artifact@v4
         with:
-          name: python-app  # Changed to match the download step
+          name: python-app
           path: |
             release.zip
             !venv/
@@ -52,10 +52,15 @@ jobs:
       - name: Download artifact from build job
         uses: actions/download-artifact@v4
         with:
-          name: python-app  # This is now consistent with the upload step
+          name: python-app
 
       - name: Unzip artifact for deployment
         run: unzip release.zip
+
+      - name: 'Azure Login'
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
 
       - name: 'Deploy to Azure Web App'
         uses: azure/webapps-deploy@v3
