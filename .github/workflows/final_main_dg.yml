@@ -75,5 +75,6 @@ jobs:
         with:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
           action: upload
-          app_location: v1/templates/index.html
+          app_location: v1/
           output_location: /
+          app_name: app.py
