@@ -78,3 +78,4 @@ jobs:
           app_location: v1/
           output_location: /
           app_name: dg  # Ensure this is set correctly
+          package: app.py
