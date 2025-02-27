@@ -65,10 +65,9 @@ jobs:
       - name: 'Azure Login'
         uses: azure/login@v1
         with:
-          clientSecret":  "675ce6b3-329d-495f-a5f6-116876aa79ee"
           subscription-id: "ed05b40a-0146-4437-93d2-bd5af5c791a0"
           tenant-id: "876e387c-7116-48f0-b3b1-ded452823875"
-          client-id: "a1f4c022-4417-4d93-8c73-5fa493f38cdf"
+          client-id: "675ce6b3-329d-495f-a5f6-116876aa79ee"
       
       - name: 'Verify Azure Login'
         run: az account show
