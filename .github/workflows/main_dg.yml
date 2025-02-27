@@ -65,5 +65,4 @@ jobs:
         with:
           app-name: 'dg' # Replace with your Web App name
           slot-name: 'Production'
-          package: release.zip # Path to the artifact to deploy
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_AB2024D3B0D1431796E35F29CF6C7170 }} # Use Publish Profile Secret
