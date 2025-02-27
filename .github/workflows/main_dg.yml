@@ -59,12 +59,16 @@ jobs:
       - name: Unzip artifact for deployment
         run: unzip release.zip
 
+      - name: Checkout code
+        uses: actions/checkout@v2
+        
       - name: 'Azure Login'
         uses: azure/login@v1
         with:
           client-id: "a1f4c022-4417-4d93-8c73-5fa493f38cdf"
           tenant-id: "876e387c-7116-48f0-b3b1-ded452823875"
           subscription-id: "ed05b40a-0146-4437-93d2-bd5af5c791a0"
+          enableOIDC: true
       
       - name: 'Verify Azure Login'
         run: az account show
