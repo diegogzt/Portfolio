@@ -1,91 +1,97 @@
-function areaAuto(){
+function areaAuto() {
     const input = document.getElementById('user-input');
-    
+
     input.addEventListener('input', function () {
         this.style.height = 'auto'; // Restablece la altura para recalcularla
         this.style.height = this.scrollHeight + 'px'; // Ajusta la altura al contenido
     });
-    
 }
 
-const chatBody = document.getElementById("chat-body"); // Obtiene el elemento del DOM con el id "chat-body"
-const userInput = document.getElementById("user-input"); // Obtiene el elemento del DOM con el id "user-input"
-const sendButton = document.getElementById("button"); // Obtiene el botón de envío
+const chatBody = document.getElementById("chat-body");
+const userInput = document.getElementById("user-input");
+const sendButton = document.getElementById("button");
 
 function addMessage(role, message) {
     areaAuto();
-    const div = document.createElement("div"); // Crea un nuevo elemento div
-    div.className = `message ${role}`; // Asigna una clase al div basada en el rol (user o bot)
+    const div = document.createElement("div");
+    div.className = `message ${role}`;
     if (role == "bot") {
         div.className = `chati`;
         // Reemplaza los dobles asteriscos por saltos de línea
         message = message.replace(/\*\*/g, '<br>');
         // Convierte los enlaces en HTML
         message = message.replace(/(https?:\/\/[^\s]+)/g, '<a href="$1" style="color: blue;" target="_blank">$1</a>');
-        div.innerHTML = message; // Establece el contenido HTML del div al mensaje proporcionado
+        div.innerHTML = message;
     } else {
-        div.textContent = message; // Establece el contenido de texto del div al mensaje proporcionado
+        div.textContent = message;
     }
 
     // Aplica estilos para el ancho máximo y el ajuste de texto
     div.style.maxWidth = '510px';
     div.style.marginLeft = '20px';
 
-    chatBody.appendChild(div); // Añade el div al final del elemento chatBody
-    chatBody.scrollTop = chatBody.scrollHeight; // Desplaza el chatBody hacia abajo para mostrar el nuevo mensaje
+    chatBody.appendChild(div);
+    chatBody.scrollTop = chatBody.scrollHeight;
 }
 
 function addLoadingMessage() {
     const div = document.createElement("div");
     div.className = "message bot loading";
-    div.innerHTML = '<div class="loading-spinner"></div>'; // Añade la animación de cargando
+    div.innerHTML = '<div class="loading-spinner"></div>';
     chatBody.appendChild(div);
     chatBody.scrollTop = chatBody.scrollHeight;
     return div;
 }
 
 async function sendMessage() {
-    const message = userInput.value.trim(); // Obtiene y recorta el valor del input de usuario
-    if (!message) return; // Si el mensaje está vacío, no hace nada
+    const message = userInput.value.trim();
+    if (!message) return;
 
-    addMessage("user", message); // Añade el mensaje del usuario al chat
+    addMessage("user", message);
 
-    // Deshabilita el campo de entrada y el botón de envío
     userInput.disabled = true;
     sendButton.disabled = true;
 
-    const loadingMessage = addLoadingMessage(); // Añade el mensaje de cargando
+    const loadingMessage = addLoadingMessage();
 
     try {
-        const response = await fetch("https://https://portfolio-orpin-eight-74.vercel.app", { // Envía una solicitud POST al servidor
+        // Note we're using '/api/chat' instead of just '/chat'
+        const response = await fetch('/api/chat', {
             method: "POST",
-            headers: { "Content-Type": "application/json" }, // Establece el tipo de contenido como JSON
-            body: JSON.stringify({ message }) // Convierte el mensaje a una cadena JSON y lo envía en el cuerpo de la solicitud
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ message })
         });
 
-        const data = await response.json(); // Espera la respuesta del servidor y la convierte a JSON
-        chatBody.removeChild(loadingMessage); // Elimina el mensaje de cargando
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        chatBody.removeChild(loadingMessage);
 
         if (data.response) {
-            addMessage("bot", data.response); // Si hay una respuesta, añade el mensaje del bot al chat
+            addMessage("bot", data.response);
         } else {
-            addMessage("bot", "Lo siento, ocurrió un error."); // Si no hay respuesta, muestra un mensaje de error
+            addMessage("bot", "Lo siento, ocurrió un error en la respuesta.");
         }
     } catch (error) {
-        console.error(error); // Muestra el error en la consola
-        chatBody.removeChild(loadingMessage); // Elimina el mensaje de cargando
-        addMessage("bot", "No se pudo conectar con el servidor."); // Añade un mensaje de error al chat
+        console.error("Error:", error);
+        chatBody.removeChild(loadingMessage);
+        addMessage("bot", "No se pudo conectar con el servidor. Error: " + error.message);
     }
 
-    // Habilita el campo de entrada y el botón de envío
     userInput.disabled = false;
     sendButton.disabled = false;
-    userInput.value = ""; // Limpia el campo de entrada del usuario
-    userInput.focus(); // Enfoca el campo de entrada del usuario
+    userInput.value = "";
+    userInput.focus();
 }
 
-userInput.addEventListener("keydown", function(event) { // Añade un evento al campo de entrada del usuario
-    if (event.key === "Enter") { // Si la tecla presionada es Enter
-        sendMessage(); // Envía el mensaje
+userInput.addEventListener("keydown", function (event) {
+    if (event.key === "Enter") {
+        event.preventDefault(); // Prevent default to avoid submitting a form if inside one
+        sendMessage();
     }
 });
+
+// Initialize the auto-sizing textarea when the page loads
+document.addEventListener('DOMContentLoaded', areaAuto);
