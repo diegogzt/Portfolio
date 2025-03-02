@@ -2,8 +2,8 @@ function areaAuto() {
     const input = document.getElementById('user-input');
 
     input.addEventListener('input', function () {
-        this.style.height = 'auto'; // Restablece la altura para recalcularla
-        this.style.height = this.scrollHeight + 'px'; // Ajusta la altura al contenido
+        this.style.height = 'auto';
+        this.style.height = this.scrollHeight + 'px';
     });
 }
 
@@ -17,16 +17,13 @@ function addMessage(role, message) {
     div.className = `message ${role}`;
     if (role == "bot") {
         div.className = `chati`;
-        // Reemplaza los dobles asteriscos por saltos de línea
         message = message.replace(/\*\*/g, '<br>');
-        // Convierte los enlaces en HTML
         message = message.replace(/(https?:\/\/[^\s]+)/g, '<a href="$1" style="color: blue;" target="_blank">$1</a>');
         div.innerHTML = message;
     } else {
         div.textContent = message;
     }
 
-    // Aplica estilos para el ancho máximo y el ajuste de texto
     div.style.maxWidth = '510px';
     div.style.marginLeft = '20px';
 
@@ -43,24 +40,42 @@ function addLoadingMessage() {
     return div;
 }
 
-async function sendMessage() {
+// Global variable to track if we're currently retrying
+let isRetrying = false;
+
+async function sendMessage(retryCount = 0) {
     const message = userInput.value.trim();
     if (!message) return;
 
-    addMessage("user", message);
+    // Only add user message on first attempt, not on retries
+    if (retryCount === 0) {
+        addMessage("user", message);
+        userInput.value = "";
+    }
 
     userInput.disabled = true;
     sendButton.disabled = true;
 
     const loadingMessage = addLoadingMessage();
 
+    // Set a local retry flag
+    isRetrying = retryCount > 0;
+
     try {
-        // Note we're using '/api/chat' instead of just '/chat'
-        const response = await fetch('/api/chat', {
+        // Use a timeout promise to allow aborting long requests
+        const fetchPromise = fetch('/api/chat', {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ message })
         });
+
+        // Create a timeout promise
+        const timeoutPromise = new Promise((_, reject) => {
+            setTimeout(() => reject(new Error('Request timed out')), 25000);
+        });
+
+        // Race the fetch against the timeout
+        const response = await Promise.race([fetchPromise, timeoutPromise]);
 
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
@@ -74,22 +89,50 @@ async function sendMessage() {
         } else {
             addMessage("bot", "Lo siento, ocurrió un error en la respuesta.");
         }
+
+        // Reset retry flag
+        isRetrying = false;
+
     } catch (error) {
         console.error("Error:", error);
         chatBody.removeChild(loadingMessage);
-        addMessage("bot", "No se pudo conectar con el servidor. Error: " + error.message);
+
+        // Implement retry logic
+        if (retryCount < 2) {  // Try up to 2 additional times
+            addMessage("bot", `Estoy teniendo problemas para conectar. Intentando nuevamente... (${retryCount + 1}/3)`);
+            setTimeout(() => sendMessage(retryCount + 1), 2000);  // Wait 2 seconds before retrying
+        } else {
+            // If all retries failed, show a fallback message
+            const fallbackResponse = `Lo siento, parece que estoy teniendo dificultades para conectarme al servidor en este momento. 
+
+Mientras tanto, puedo decirte que soy un chatbot creado por Diego, un desarrollador web de 18 años de Barcelona. 
+
+Si deseas contactar con Diego directamente:
+- Email: tovard799@gmail.com
+- Teléfono: +34 640 844 225
+- LinkedIn: https://www.linkedin.com/in/diego-gabriel-zaldivar-tovar-473a9a252/
+
+¿Puedo ayudarte con algo más mientras resolvemos los problemas técnicos?`;
+
+            addMessage("bot", fallbackResponse);
+            isRetrying = false;
+        }
     }
 
-    userInput.disabled = false;
-    sendButton.disabled = false;
-    userInput.value = "";
-    userInput.focus();
+    // Only re-enable inputs if we're not in the middle of retrying
+    if (!isRetrying) {
+        userInput.disabled = false;
+        sendButton.disabled = false;
+        userInput.focus();
+    }
 }
 
 userInput.addEventListener("keydown", function (event) {
-    if (event.key === "Enter") {
-        event.preventDefault(); // Prevent default to avoid submitting a form if inside one
-        sendMessage();
+    if (event.key === "Enter" && !event.shiftKey) {
+        event.preventDefault();
+        if (!isRetrying) {
+            sendMessage();
+        }
     }
 });
 

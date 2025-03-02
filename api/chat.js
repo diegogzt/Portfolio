@@ -1,15 +1,12 @@
 import OpenAI from 'openai';
-import dotenv from 'dotenv';
-
-dotenv.config();
 
 // Configuración de la API de DeepSeek
 const openai = new OpenAI({
     baseURL: 'https://api.deepseek.com',
-    apiKey: 'sk-eb84e6b408164943bae95df877b0685b',
+    apiKey: process.env.OPENAI_API_KEY || 'sk-eb84e6b408164943bae95df877b0685b',
 });
 
-// Contexto personalizado
+// Contexto personalizado (reducido para mostrar la estructura)
 const customContext = `
 Contexto del Chatbot:
 
@@ -76,6 +73,20 @@ Si tu interés está relacionado con alguno de sus proyectos o habilidades espec
 `;
 
 export default async function handler(req, res) {
+    // Add CORS headers
+    res.setHeader('Access-Control-Allow-Credentials', true);
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT');
+    res.setHeader(
+        'Access-Control-Allow-Headers',
+        'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version'
+    );
+
+    // Handle OPTIONS method for preflight requests
+    if (req.method === 'OPTIONS') {
+        return res.status(200).end();
+    }
+
     // Check if the request method is POST
     if (req.method !== 'POST') {
         return res.status(405).json({ error: 'Method not allowed' });
@@ -88,6 +99,10 @@ export default async function handler(req, res) {
     }
 
     try {
+        // Add timeout to the OpenAI request
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 50000); // 50 second timeout
+
         const response = await openai.chat.completions.create({
             model: "deepseek-chat",
             messages: [
@@ -95,13 +110,35 @@ export default async function handler(req, res) {
                 { role: "user", content: userMessage },
             ],
             stream: false,
+            max_tokens: 500, // Limit token count to speed up response
+            temperature: 0.7 // Lower temperature for more focused responses
+        }, {
+            signal: controller.signal
         });
+
+        clearTimeout(timeoutId);
 
         const botResponse = response.choices[0].message.content;
         res.status(200).json({ response: botResponse });
 
     } catch (error) {
         console.error("Error al llamar a la API de DeepSeek:", error);
-        res.status(500).json({ error: "Error al comunicarse con el chatbot." });
+
+        // More specific error messages
+        if (error.name === 'AbortError') {
+            return res.status(504).json({ error: "La solicitud a DeepSeek tomó demasiado tiempo en responder." });
+        }
+
+        if (error.response) {
+            return res.status(error.response.status || 500).json({
+                error: `Error de la API: ${error.response.statusText || 'Unknown error'}`,
+                details: error.message
+            });
+        }
+
+        res.status(500).json({
+            error: "Error al comunicarse con el chatbot.",
+            details: error.message
+        });
     }
 }
