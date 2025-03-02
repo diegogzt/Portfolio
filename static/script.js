@@ -57,7 +57,7 @@ async function sendMessage() {
     const loadingMessage = addLoadingMessage(); // Añade el mensaje de cargando
 
     try {
-        const response = await fetch("https://https://portfolio-orpin-eight-74.vercel.app", { // Envía una solicitud POST al servidor
+        const response = await fetch("/chat", { // Envía una solicitud POST al servidor
             method: "POST",
             headers: { "Content-Type": "application/json" }, // Establece el tipo de contenido como JSON
             body: JSON.stringify({ message }) // Convierte el mensaje a una cadena JSON y lo envía en el cuerpo de la solicitud
