@@ -107,7 +107,7 @@ app.post('/chat', async (req, res) => {
 
     try {
         const response = await openai.chat.completions.create({
-            model: "deepseek-chat",
+            model: "gpt-4",
             messages: [
                 { role: "system", content: customContext },
                 { role: "user", content: userMessage },
