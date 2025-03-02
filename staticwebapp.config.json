@@ -1,8 +1,0 @@
-{
-  "routes": [
-    {
-      "route": "/",
-      "serve": "/v1/templates/index.html"
-    }
-  ]
-}

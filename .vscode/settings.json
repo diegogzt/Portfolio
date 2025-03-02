@@ -1,0 +1,5 @@
+{
+    "liveServer.settings.port": 5503,
+    "appService.defaultWebAppToDeploy": "/subscriptions/ed05b40a-0146-4437-93d2-bd5af5c791a0/resourceGroups/appsvc_linux_centralus_basic/providers/Microsoft.Web/sites/dgtovarv1",
+    "appService.deploySubpath": "."
+}
