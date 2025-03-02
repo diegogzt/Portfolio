@@ -95,7 +95,7 @@ Si tu interés está relacionado con alguno de sus proyectos o habilidades espec
 `; // **¡PEGA AQUÍ TU CONTEXTO COMPLETO!**
 
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'static', 'index.html')); // Ruta a static/index.html
+    res.sendFile(path.join(__dirname, 'static', 'index.html')); // Ruta a index.html DENTRO de static - ¡MODIFICADO!
 });
 // Ruta /chat (similar a tu ruta en Flask)
 app.post('/chat', async (req, res) => {
