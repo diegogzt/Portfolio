@@ -8,10 +8,11 @@ html {
 
 body {
     animation: body 2s forwards 0.5s;
+    background-image: url('background.jpeg');
 }
 
     body {
-        cursor: url("../static/cursor.png")
+        cursor: url("cursor.png")
     }
 
 :root {
